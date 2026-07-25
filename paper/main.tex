@@ -1,0 +1,542 @@
+\documentclass[final,5p,times,twocolumn]{elsarticle}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{balance}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\usepackage[nameinlink,capitalise]{cleveref}
+
+\journal{Theoretical Computer Science}
+\biboptions{sort&compress}
+
+\usepackage{aliascnt}
+
+\newtheorem{theorem}{Theorem}[section]
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+\newaliascnt{proposition}{theorem}
+\newtheorem{proposition}[proposition]{Proposition}
+\aliascntresetthe{proposition}
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+\theoremstyle{definition}
+\newaliascnt{definition}{theorem}
+\newtheorem{definition}[definition]{Definition}
+\aliascntresetthe{definition}
+\theoremstyle{remark}
+\newaliascnt{remark}{theorem}
+\newtheorem{remark}[remark]{Remark}
+\aliascntresetthe{remark}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{proposition}{Proposition}{Propositions}
+\crefname{corollary}{Corollary}{Corollaries}
+\crefname{definition}{Definition}{Definitions}
+\crefname{remark}{Remark}{Remarks}
+
+\newcommand{\interior}[1]{\operatorname{int}(#1)}
+\newcommand{\relint}{\operatorname{relint}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\aff}{\operatorname{aff}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\height}{h}
+\newcommand{\ratio}{\rho}
+\newcommand{\Potential}{\Phi}
+\newcommand{\supp}{\operatorname{supp}}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Multiplicative Area Potentials for Edge--Point Assignments in Convex Polygons}
+
+% Replace the anonymous author line before submission.
+\author{Anonymous author}
+
+\begin{abstract}
+Let a finite set of points lie in the interior of a strictly convex polygon. Bui proposed a local process that assigns one point to each polygon edge and, whenever two resulting edge--point triangles overlap, swaps their assigned points. He conjectured that every sequence of legal swaps terminates. We prove this conjecture by introducing a multiplicative potential: the product of the inward affine heights of the assigned points over their assigned edges, equivalently the product of twice the corresponding triangle areas. A local overlap yields a strict two-by-two multiplicative inequality, so every legal swap strictly decreases the potential.
+
+We then extend the argument to prescribed edge capacities. For an assignment of several points to each edge, a conflict is an overlap between the convex hulls of the assigned points and their base edges. An extremal-ratio exchange strictly decreases the same potential and therefore terminates. Finally, a globally minimum-potential assignment induces pairwise ratio orderings. Under Bui's general-plus position hypothesis, these orderings admit strict pairwise separating lines. Intersecting the associated half-planes gives edge-attached convex regions containing the prescribed numbers of points. This yields a short alternative proof of Bui's convex-subdivision theorem and a transportation formulation of the construction.
+\end{abstract}
+
+\begin{keyword}
+compatible triangulations \sep convex subdivisions \sep geometric matching \sep potential functions \sep transportation problems
+\end{keyword}
+
+\end{frontmatter}
+
+\section{Introduction}
+\label{sec:intro}
+
+Let
+\[
+P=Q_1Q_2\cdots Q_h\subset\R^2
+\]
+be a strictly convex polygon whose vertices are listed counterclockwise, and let $A$ be a finite subset of $\interior P$. A recurring step in compatible-triangulation constructions is to associate points of $A$ with the boundary edges of $P$ so that the corresponding edge-attached triangles, or more general edge-attached convex regions, have disjoint interiors.
+
+Bui \cite[Section~8.2]{Bui2025} considered the case $|A|=h$, with one point assigned to each edge. Starting from an arbitrary assignment, his process selects two assigned triangles with overlapping interiors and exchanges their apices. Bui conjectured that every possible sequence of such exchanges terminates; equivalently, the directed state graph of assignments is acyclic. He verified the conjecture computationally for $h\leq 5$.
+
+We prove the conjecture with a scalar potential. For the edge
+\[
+e_i=[Q_i,Q_{i+1}],
+\]
+where indices are taken modulo $h$, define the inward affine height
+\begin{equation}
+\height_i(x)=\det(Q_{i+1}-Q_i,x-Q_i).
+\label{eq:height}
+\end{equation}
+Because the boundary is oriented counterclockwise, $\height_i(x)>0$ for every $x\in\interior P$, and $\height_i(x)/2$ is the Euclidean area of the triangle $\conv(e_i\cup\{x\})$.
+
+For an assignment, we multiply the heights of all points over their assigned edges. The decisive local fact is that, if the triangles based on $e_i$ and $e_j$ with apices $p$ and $q$ overlap in their interiors, then
+\begin{equation}
+\height_i(p)\height_j(q)>
+\height_i(q)\height_j(p).
+\label{eq:local-product-intro}
+\end{equation}
+The swap $p\leftrightarrow q$ therefore strictly decreases the product potential. Since the state space is finite, directed cycles and infinite executions are impossible.
+
+We also retain the same potential when edge $e_i$ must receive a prescribed number $c_i$ of points. A pair of classes conflicts when the interiors of their edge-attached convex hulls intersect. The ratio $\height_i/\height_j$ then selects a point of the first class and a point of the second class whose exchange strictly decreases the potential.
+
+The global minimum of the potential contains more structure. For every pair of edges, all ratios in the first class are no larger than all ratios in the second class. Under the general-plus position condition used by Bui, this weak ordering can be perturbed into a strict geometric separation. Intersecting the resulting half-planes produces the convex regions required by Bui's subdivision theorem \cite[Theorem~4.1]{Bui2025}.
+
+Our proofs are affine in nature. The determinant in \eqref{eq:height} gives a convenient area interpretation, but the argument only uses positive affine defining functions for the supporting lines of the polygon edges.
+
+\section{Geometric preliminaries}
+\label{sec:prelim}
+
+For each $i\in\{1,\ldots,h\}$, let
+\[
+\Delta_i(p)=\conv\{Q_i,Q_{i+1},p\}
+\qquad (p\in\interior P).
+\]
+Throughout the paper, two two-dimensional sets \emph{overlap} when their interiors have nonempty intersection. This convention excludes the unavoidable common endpoint of triangles based on adjacent polygon edges.
+
+We record three elementary properties of the affine heights.
+
+\begin{lemma}
+\label{lem:height-properties}
+For every $i$ the following statements hold.
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item $\height_i=0$ on the supporting line $\aff(e_i)$;
+\item $\height_i>0$ on $\interior P$;
+\item if $j\neq i$ and $y\in\relint(e_i)$, then $\height_j(y)>0$.
+\end{enumerate}
+If $e_i$ and $e_j$ are nonadjacent, then $\height_j>0$ on the whole compact segment $e_i$.
+\end{lemma}
+
+\begin{proof}
+The first assertion follows directly from \eqref{eq:height}. The counterclockwise orientation places $P$ in the closed left half-plane of every directed boundary edge, and strict convexity puts every interior point in the corresponding open half-plane; this proves the second assertion. A point of $\relint(e_i)$ lies strictly inside every supporting half-plane other than the one determined by $e_i$, which proves the third assertion. If $e_i$ and $e_j$ are nonadjacent, neither endpoint of $e_i$ lies on $\aff(e_j)$, so strict positivity extends to all of $e_i$.
+\end{proof}
+
+For distinct indices $i,j$, define
+\begin{equation}
+\ratio_{ij}(x)=\frac{\height_i(x)}{\height_j(x)},
+\qquad x\in\interior P.
+\label{eq:ratio}
+\end{equation}
+All denominators in \eqref{eq:ratio} are positive.
+
+We use Bui's general-plus position hypothesis only in \cref{sec:separators,sec:subdivision}.
+
+\begin{definition}
+\label{def:general-plus}
+A finite point set $X\subset\R^2$ is in \emph{general-plus position} if no three points of $X$ are collinear and no three lines determined by three disjoint pairs of points of $X$ are concurrent.
+\end{definition}
+
+\section{The local multiplicative inequality}
+\label{sec:local}
+
+The following lemma is the source of every descent statement in the paper.
+
+\begin{lemma}[Local ratio inequality]
+\label{lem:local-ratio}
+Let $i\neq j$ and $p,q\in\interior P$. If
+\[
+\interior{\Delta_i(p)}\cap\interior{\Delta_j(q)}\neq\varnothing,
+\]
+then
+\begin{equation}
+\ratio_{ij}(p)>\ratio_{ij}(q).
+\label{eq:local-ratio}
+\end{equation}
+Equivalently,
+\begin{equation}
+\height_i(p)\height_j(q)>
+\height_i(q)\height_j(p).
+\label{eq:local-product}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Choose
+\[
+x\in\interior{\Delta_i(p)}\cap\interior{\Delta_j(q)}.
+\]
+Because $x\in\interior{\Delta_i(p)}$, there are $\alpha\in(0,1)$ and $y\in\relint(e_i)$ such that
+\[
+x=\alpha p+(1-\alpha)y.
+\]
+Indeed, one may take the intersection of the ray from $p$ through $x$ with the base edge $e_i$. Since $\height_i(y)=0$,
+\[
+\height_i(x)=\alpha\height_i(p).
+\]
+By \cref{lem:height-properties}, $\height_j(y)>0$, and hence
+\[
+\height_j(x)=\alpha\height_j(p)+(1-\alpha)\height_j(y)
+>\alpha\height_j(p).
+\]
+It follows that
+\[
+\ratio_{ij}(x)<\ratio_{ij}(p).
+\]
+Applying the same argument to $x\in\interior{\Delta_j(q)}$, with $i$ and $j$ interchanged, gives
+\[
+\ratio_{ij}(x)>\ratio_{ij}(q).
+\]
+Combining the two strict inequalities proves \eqref{eq:local-ratio}; multiplying by the positive denominators gives \eqref{eq:local-product}.
+\end{proof}
+
+\begin{remark}
+\label{rem:affine}
+The proof is affine. Under a nonsingular affine transformation, every $\height_i$ is multiplied by the same nonzero determinant up to the chosen orientation, so all ratios and all comparisons remain unchanged.
+\end{remark}
+
+\section{Termination of Bui's swap process}
+\label{sec:bui}
+
+Assume in this section that $|A|=h$. We represent an assignment by a bijection
+\[
+\sigma:\{1,\ldots,h\}\longrightarrow A,
+\]
+where $\sigma(i)$ is assigned to $e_i$. Define
+\begin{equation}
+\Potential(\sigma)=\prod_{i=1}^{h}\height_i(\sigma(i)).
+\label{eq:matching-potential}
+\end{equation}
+The potential is positive.
+
+A \emph{legal swap} selects distinct indices $i,j$ such that
+\[
+\interior{\Delta_i(\sigma(i))}
+\cap
+\interior{\Delta_j(\sigma(j))}
+\neq\varnothing
+\]
+and exchanges $\sigma(i)$ and $\sigma(j)$.
+
+\begin{theorem}[Bui's acyclicity conjecture]
+\label{thm:bui}
+Every sequence of legal swaps terminates. Equivalently, the directed state graph of assignments is acyclic.
+\end{theorem}
+
+\begin{proof}
+Write $p=\sigma(i)$ and $q=\sigma(j)$, and let $\sigma'$ be obtained by exchanging $p$ and $q$. All factors in \eqref{eq:matching-potential} except the two indexed by $i$ and $j$ remain unchanged. Therefore
+\[
+\frac{\Potential(\sigma')}{\Potential(\sigma)}
+=
+\frac{\height_i(q)\height_j(p)}
+{\height_i(p)\height_j(q)}.
+\]
+The two original triangles overlap, so \cref{lem:local-ratio} makes the displayed ratio strictly smaller than $1$. Thus every legal swap strictly decreases $\Potential$.
+
+There are only $h!$ assignments. A strictly decreasing execution cannot revisit a state, and consequently it contains at most $h!-1$ swaps. In particular, no directed cycle and no infinite execution exist.
+\end{proof}
+
+\begin{corollary}
+\label{cor:terminal-matching}
+Starting from any assignment, every rule for selecting the next conflicting pair reaches, after finitely many swaps, an assignment whose edge--point triangles have pairwise disjoint interiors.
+\end{corollary}
+
+\begin{remark}[Relation to Bui's terminology]
+\label{rem:bui-intersection}
+Bui formulates the move using the word ``intersect'' \cite[Conjecture~8.1]{Bui2025}. For adjacent base edges, the closed triangles always share the common polygon vertex, so the intended conflict notion must ignore that unavoidable contact. Under Bui's general-position hypothesis, every other intersection is an interior overlap: a boundary-only contact would either be a shared vertex or place a vertex on an edge, and the latter would make three points collinear. Hence \cref{thm:bui} proves the state-graph conjecture in its intended geometric sense. The proof itself requires neither general nor general-plus position.
+\end{remark}
+
+\begin{remark}
+The finite-state argument gives no polynomial upper bound on the number of swaps. Whether every execution has polynomial length remains open.
+\end{remark}
+
+\section{Assignments with prescribed capacities}
+\label{sec:capacitated}
+
+Let $c_1,\ldots,c_h$ be nonnegative integers satisfying
+\[
+\sum_{i=1}^{h}c_i=|A|.
+\]
+A \emph{capacitated assignment} is a partition
+\[
+A=S_1\sqcup\cdots\sqcup S_h,
+\qquad |S_i|=c_i.
+\]
+Set
+\begin{equation}
+\Potential(S_1,\ldots,S_h)
+=
+\prod_{i=1}^{h}\prod_{p\in S_i}\height_i(p)
+\label{eq:cap-potential}
+\end{equation}
+and
+\begin{equation}
+K_i=\conv(e_i\cup S_i).
+\label{eq:Ki}
+\end{equation}
+If $S_i=\varnothing$, then $K_i=e_i$ and $\interior{K_i}=\varnothing$.
+
+We first extend the local ratio argument from a triangle to the convex hull of an arbitrary class.
+
+\begin{lemma}[Extremal ratios in an edge-attached hull]
+\label{lem:extremal-ratios}
+Fix $i\neq j$.
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item If $S_i\neq\varnothing$ and
+\[
+M_i=\max_{p\in S_i}\ratio_{ij}(p),
+\]
+then every $x\in\interior{K_i}$ satisfies $\ratio_{ij}(x)<M_i$.
+\item If $S_j\neq\varnothing$ and
+\[
+m_j=\min_{q\in S_j}\ratio_{ij}(q),
+\]
+then every $x\in\interior{K_j}$ satisfies $\ratio_{ij}(x)>m_j$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Every generator of $K_i$ belongs to the closed half-plane
+\[
+\height_i-M_i\height_j\leq 0.
+\]
+This is true on $S_i$ by the definition of $M_i$, and it is true on $e_i$ because $\height_i=0$ and $\height_j\geq0$ there. Hence the whole convex hull $K_i$ lies in this half-plane. Since $S_i\neq\varnothing$ and its points lie in $\interior P$, the set $K_i$ is two-dimensional. An interior point of a two-dimensional convex set contained in a closed half-plane cannot lie on the boundary line of that half-plane. Thus
+\[
+\height_i(x)-M_i\height_j(x)<0,
+\]
+which proves the first assertion. The second follows in the same way from the half-plane
+\[
+\height_i-m_j\height_j\geq 0.
+\]
+\end{proof}
+
+\begin{theorem}[Capacitated conflict exchange]
+\label{thm:cap-exchange}
+Suppose $\interior{K_i}\cap\interior{K_j}\neq\varnothing$. Choose
+\[
+p\in\operatorname*{arg\,max}_{u\in S_i}\ratio_{ij}(u),
+\qquad
+q\in\operatorname*{arg\,min}_{v\in S_j}\ratio_{ij}(v).
+\]
+Exchanging $p$ and $q$ preserves all capacities and strictly decreases the potential \eqref{eq:cap-potential}. Consequently, every sequence of these extremal conflict exchanges terminates at an assignment for which the interiors of $K_1,\ldots,K_h$ are pairwise disjoint.
+\end{theorem}
+
+\begin{proof}
+The conflict assumption implies $S_i,S_j\neq\varnothing$. Choose
+\[
+x\in\interior{K_i}\cap\interior{K_j}.
+\]
+By \cref{lem:extremal-ratios},
+\[
+\ratio_{ij}(p)>\ratio_{ij}(x)>\ratio_{ij}(q).
+\]
+Therefore
+\[
+\height_i(p)\height_j(q)>
+\height_i(q)\height_j(p),
+\]
+so the exchange strictly decreases \eqref{eq:cap-potential}. The number of capacitated assignments is
+\[
+\frac{|A|!}{c_1!\cdots c_h!},
+\]
+and the same finite-state argument as in \cref{thm:bui} proves termination. A terminal assignment has no conflicting pair.
+\end{proof}
+
+\section{Minimum-potential assignments and strict separators}
+\label{sec:separators}
+
+We now fix a capacitated assignment that globally minimizes \eqref{eq:cap-potential}. Such an assignment exists because the feasible set is finite.
+
+\begin{lemma}[Pairwise ratio order]
+\label{lem:pairwise-order}
+Let $(S_1,\ldots,S_h)$ minimize $\Potential$. For distinct $i,j$ and arbitrary $p\in S_i$, $q\in S_j$,
+\begin{equation}
+\ratio_{ij}(p)\leq\ratio_{ij}(q).
+\label{eq:pairwise-order}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Exchanging $p$ and $q$ produces another feasible capacitated assignment. Minimality gives
+\[
+\height_i(p)\height_j(q)
+\leq
+\height_i(q)\height_j(p).
+\]
+All four factors are positive, so division gives \eqref{eq:pairwise-order}.
+\end{proof}
+
+Thus, whenever both classes are nonempty,
+\begin{equation}
+\max_{p\in S_i}\ratio_{ij}(p)
+\leq
+\min_{q\in S_j}\ratio_{ij}(q).
+\label{eq:ordered-intervals}
+\end{equation}
+The next lemma converts this weak ordering into a strict separator. The equality case is the only place where general-plus position is needed.
+
+\begin{lemma}[Pairwise strict separator]
+\label{lem:separator}
+Assume that $V(P)\cup A$ is in general-plus position, where $V(P)=\{Q_1,\ldots,Q_h\}$. For every pair $i\neq j$, there is a line $L_{ij}$ with complementary closed half-planes $H_{ij}^{i}$ and $H_{ij}^{j}$ such that
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item $e_i\subset H_{ij}^{i}$ and $e_j\subset H_{ij}^{j}$;
+\item $\relint(e_i)\cup S_i\subset\interior{H_{ij}^{i}}$;
+\item $\relint(e_j)\cup S_j\subset\interior{H_{ij}^{j}}$.
+\end{enumerate}
+If $e_i$ and $e_j$ are adjacent, their common endpoint is allowed to lie on $L_{ij}$.
+\end{lemma}
+
+\begin{proof}
+Suppose first that $S_i$ and $S_j$ are nonempty, and put
+\[
+a=\max_{p\in S_i}\ratio_{ij}(p),
+\qquad
+b=\min_{q\in S_j}\ratio_{ij}(q).
+\]
+By \cref{lem:pairwise-order}, $a\leq b$.
+
+If $a<b$, choose $t\in(a,b)$ and let
+\[
+L=\{x:\height_i(x)-t\height_j(x)=0\}.
+\]
+The affine function $F=\height_i-t\height_j$ is negative on $S_i$ and positive on $S_j$. On $e_i$ it equals $-t\height_j\leq0$, whereas on $e_j$ it equals $\height_i\geq0$. By \cref{lem:height-properties}, these edge inequalities are strict on the relative interiors. The two closed sign half-planes therefore have the required properties.
+
+It remains to treat $a=b=t$. Let
+\[
+L_0=\{x:\height_i(x)-t\height_j(x)=0\}.
+\]
+There is at least one equality point in each class. Since no three points of $V(P)\cup A$ are collinear, $L_0$ contains exactly two points of this set, say $p\in S_i$ and $q\in S_j$.
+
+We claim that the supporting lines $\aff(e_i)$ and $\aff(e_j)$ are parallel. If they were not, their intersection $z$ would satisfy $\height_i(z)=\height_j(z)=0$, hence $z\in L_0$. If the edges were adjacent, their common endpoint would lie on $L_0$ together with $p$ and $q$, contradicting general position. If they were nonadjacent, the three lines $\aff(e_i)$, $\aff(e_j)$, and $L_0=\aff\{p,q\}$ would be concurrent and determined by three disjoint pairs of points of $V(P)\cup A$, contradicting general-plus position. The claim follows.
+
+Consequently, $L_0$ is parallel to both supporting lines. By \cref{lem:height-properties}, the compact edge $e_i$ lies strictly in the negative $F$-half-plane and $e_j$ lies strictly in the positive $F$-half-plane. Every point of $(S_i\cup S_j)\setminus\{p,q\}$ also lies strictly on its prescribed side because $p$ and $q$ are the only equality points. Rotate $L_0$ through a sufficiently small angle about the midpoint of $pq$, choosing the direction that places $p$ on the $e_i$-side and $q$ on the $e_j$-side. The strict side relations for the two compact edges and the remaining finite set of points persist under a sufficiently small rotation. The rotated line is the required strict separator.
+
+Now suppose $S_i=\varnothing$ and $S_j\neq\varnothing$. Choose
+\[
+0<t<\min_{q\in S_j}\ratio_{ij}(q)
+\]
+and use the line $\height_i-t\height_j=0$. If $S_i\neq\varnothing$ and $S_j=\varnothing$, choose
+\[
+t>\max_{p\in S_i}\ratio_{ij}(p).
+\]
+If both classes are empty, any $t>0$ works. In each case the sign half-plane containing $e_i$ is denoted by $H_{ij}^{i}$ and the complementary one by $H_{ij}^{j}$.
+\end{proof}
+
+\begin{remark}
+The separator lemma is stronger than the disjoint-hull conclusion of \cref{thm:cap-exchange}: every assigned point lies strictly on its class side of every pairwise separator. This strictness is what allows us to keep all points away from the boundaries of the final regions.
+\end{remark}
+
+\section{Edge-attached convex regions}
+\label{sec:subdivision}
+
+Bui calls the following family a subdivision even though the regions need not cover all of $P$; a central portion may remain unassigned \cite[Theorem~4.1]{Bui2025}. We retain that terminology.
+
+\begin{theorem}[Capacitated convex subdivision]
+\label{thm:subdivision}
+Let $P=Q_1\cdots Q_h$ be a strictly convex polygon and let $A\subset\interior P$. Assume that $V(P)\cup A$ is in general-plus position. For nonnegative integers $c_1,\ldots,c_h$ satisfying $\sum_i c_i=|A|$, there exist two-dimensional convex polygons $R_1,\ldots,R_h\subset P$ such that
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item $e_i$ is an edge of $R_i$;
+\item no point of $A$ lies on $\partial R_i$;
+\item exactly $c_i$ points of $A$ lie in $\interior{R_i}$;
+\item $\interior{R_i}\cap\interior{R_j}=\varnothing$ whenever $i\neq j$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Choose a minimum-potential assignment
+\[
+A=S_1\sqcup\cdots\sqcup S_h,
+\qquad |S_i|=c_i.
+\]
+For every unordered pair $\{i,j\}$, choose the separator and complementary half-planes supplied by \cref{lem:separator}; we use the symmetric convention $H_{ij}^{i}=H_{ji}^{i}$. Define
+\begin{equation}
+R_i=P\cap\bigcap_{j\neq i}H_{ij}^{i}.
+\label{eq:regions}
+\end{equation}
+Each $R_i$ is a bounded intersection of finitely many closed half-planes and is therefore a convex polygon.
+
+Every point of $S_i$ lies in $\interior P$ and strictly inside every half-plane $H_{ij}^{i}$, so
+\[
+S_i\subset\interior{R_i}.
+\]
+If $q\in S_j$ with $j\neq i$, then $q$ lies strictly inside $H_{ij}^{j}$ and hence strictly outside $H_{ij}^{i}$; therefore $q\notin R_i$. Thus $R_i$ contains exactly the points of $S_i$, all in its interior, and no point of $A$ lies on $\partial R_i$.
+
+For $i\neq j$ we have
+\[
+R_i\subset H_{ij}^{i},
+\qquad
+R_j\subset H_{ij}^{j}.
+\]
+The interiors of complementary closed half-planes are disjoint, so the interiors of $R_i$ and $R_j$ are disjoint.
+
+It remains to verify the edge condition and two-dimensionality. By \cref{lem:separator}, $e_i$ is contained in every half-plane defining $R_i$, and every point of $\relint(e_i)$ lies strictly inside each $H_{ij}^{i}$. Fix a midpoint $m_i\in\relint(e_i)$. Since only finitely many half-planes occur, a sufficiently small one-sided neighborhood of $m_i$ inside $P$ is contained in all of them. Hence $R_i$ contains points off the supporting line $\aff(e_i)$ and is two-dimensional. Moreover, $R_i\subset P$ and
+\[
+R_i\cap\aff(e_i)=e_i,
+\]
+because $e_i$ is the corresponding boundary edge of the strictly convex polygon $P$. Therefore $e_i$ is a one-dimensional face, hence an edge, of $R_i$. The argument is unchanged when $c_i=0$.
+\end{proof}
+
+\begin{corollary}
+\label{cor:bui-subdivision}
+\Cref{thm:subdivision} gives an alternative proof of Bui's convex-subdivision theorem \cite[Theorem~4.1]{Bui2025}.
+\end{corollary}
+
+\balance
+\section{Optimization formulation}
+\label{sec:algorithm}
+
+Taking logarithms converts the multiplicative objective into an additive transportation objective:
+\begin{equation}
+\log\Potential
+=
+\sum_{i=1}^{h}\sum_{p\in S_i}\log\height_i(p).
+\label{eq:log-potential}
+\end{equation}
+Construct a bipartite transportation instance with a unit-supply node for each $p\in A$, a demand node of capacity $c_i$ for each edge $e_i$, and cost
+\begin{equation}
+w(p,i)=\log\height_i(p).
+\label{eq:cost}
+\end{equation}
+An integral minimum-cost flow is exactly a minimum-potential capacitated assignment. The transportation polytope is integral, so an optimal integral assignment exists without any rounding argument.
+
+After obtaining the assignment, we compute one separator for each unordered pair of edges by the construction in \cref{lem:separator}, and then form the intersections in \eqref{eq:regions}. Thus the global construction reduces to one minimum-cost transportation problem followed by $O(h^2)$ constant-size separator computations.
+
+This statement is polynomial in the standard comparison model for real costs, or in a real-arithmetic model with exact access to the values in \eqref{eq:cost}. If the coordinates are rational and bit complexity is required, exact comparison of sums of logarithms introduces a separate arithmetic issue. We make no bit-complexity claim for that representation. This qualification does not affect any of the existence or termination theorems.
+
+\section{Concluding remarks}
+\label{sec:conclusion}
+
+The product of edge heights is a complete descent certificate for Bui's local swap process. The same function also controls capacity-preserving exchanges and, at a global minimum, encodes the pairwise order needed to build strict separators. In this sense the local acyclicity theorem and the convex-subdivision theorem arise from one two-by-two multiplicative inequality.
+
+Two questions remain natural. First, the factorial state bound in \cref{thm:bui} is purely finite-state; a polynomial upper bound for every legal execution would require additional structure. Second, Bui asks whether related methods extend when polygon edges are replaced by short chains. The proof of \cref{lem:local-ratio} suggests that such an extension would require affine functions or piecewise-affine gauges whose strict ratio ordering survives overlap.
+
+\section*{Declaration of competing interest}
+The author declares no competing interests.
+
+\begin{thebibliography}{00}
+
+\bibitem{Aichholzer2003}
+O. Aichholzer, F. Aurenhammer, F. Hurtado, H. Krasser,
+Towards compatible triangulations,
+Theoretical Computer Science 296 (2003) 3--13.
+\href{https://doi.org/10.1016/S0304-3975(02)00428-0}{doi:10.1016/S0304-3975(02)00428-0}.
+
+\bibitem{Bui2025}
+H. D. Bui,
+On existence of a compatible triangulation with the double circle order type,
+arXiv:2508.04602v1 (2025).
+\href{https://doi.org/10.48550/arXiv.2508.04602}{doi:10.48550/arXiv.2508.04602}.
+
+\end{thebibliography}
+
+\end{document}
