@@ -22,6 +22,7 @@ jobs:
           set -euo pipefail
           test -s 'paper/Multiplicative_Area_Potentials_TCS.pdf'
           sha256sum 'paper/Multiplicative_Area_Potentials_TCS.pdf'
+          sha256sum -c paper/SOURCE_AND_PDF_SHA256SUMS
       - name: Retain exact published PDF bytes
         uses: actions/upload-artifact@v4
         with:
