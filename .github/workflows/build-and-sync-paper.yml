@@ -1,0 +1,49 @@
+name: Build and synchronize TCS paper PDF
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout paper sources
+        uses: actions/checkout@v4
+
+      - name: Install TeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-latex-base texlive-latex-recommended \
+            texlive-latex-extra texlive-publishers \
+            texlive-fonts-recommended
+
+      - name: Build PDF from canonical source
+        shell: bash
+        run: |
+          cd paper
+          latexmk -pdf -interaction=nonstopmode -halt-on-error \
+            -file-line-error main.tex
+          test -s main.pdf
+          test "$(stat -c%s main.pdf)" -gt 20000
+          mv main.pdf Multiplicative_Area_Potentials_TCS.pdf
+
+      - name: Commit synchronized PDF
+        if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+        shell: bash
+        run: |
+          sha256sum paper/main.tex paper/Multiplicative_Area_Potentials_TCS.pdf \
+            > paper/SOURCE_AND_PDF_SHA256SUMS
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add paper/Multiplicative_Area_Potentials_TCS.pdf paper/SOURCE_AND_PDF_SHA256SUMS
+          if ! git diff --cached --quiet; then
+            git commit -m 'Synchronize reviewed TCS PDF with current source'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
