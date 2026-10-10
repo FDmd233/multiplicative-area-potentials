@@ -1,0 +1,32 @@
+name: Retain published PDF for independent visual QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/published-pdf-visual-qa.yml'
+      - 'paper/Multiplicative_Area_Potentials_TCS.pdf'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preserve-current-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout published files
+        uses: actions/checkout@v4
+      - name: Verify PDF files are present
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s 'paper/Multiplicative_Area_Potentials_TCS.pdf'
+          sha256sum 'paper/Multiplicative_Area_Potentials_TCS.pdf'
+      - name: Retain exact published PDF bytes
+        uses: actions/upload-artifact@v4
+        with:
+          name: multiplicative-area-pdf-${{ github.sha }}
+          path: |
+            paper/Multiplicative_Area_Potentials_TCS.pdf
+          if-no-files-found: error
+          retention-days: 14
