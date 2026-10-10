@@ -3,6 +3,9 @@ name: Build and synchronize TCS paper PDF
 on:
   push:
     branches: [main]
+    paths:
+      - 'paper/main.tex'
+      - '.github/workflows/build-and-sync-paper.yml'
   workflow_dispatch:
 
 permissions:
